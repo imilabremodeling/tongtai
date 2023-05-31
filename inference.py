@@ -6,6 +6,7 @@ import numpy; print("NumPy", numpy.__version__)
 import scipy; print("SciPy", scipy.__version__)
 
 import os
+import stat
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
@@ -52,7 +53,7 @@ def inference():
     print("NN score and classification:")
     print(clf_nn.score(X_test, y_test))
     print(clf_nn.predict(X_test))'''
-    
+    os.chmod('/home/jovyan/output/output.txt',stat.S_IRWXO)
     predict = random.randint(70,85)
     print("Model Prediction (Accuracy Value) : ",predict)
     
