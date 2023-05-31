@@ -22,7 +22,6 @@ def inference():
     MODEL_FILE_NN = os.environ["MODEL_FILE_NN"]
     #MODEL_PATH_LDA = os.path.join(MODEL_DIR, MODEL_FILE_LDA)
     MODEL_PATH_NN = os.path.join(MODEL_DIR, MODEL_FILE_NN)
-    OUTPUT_PATH = os.environ["OUTPUT_PATH"]
     print("code testttttttttiiiiiiing")    
     # Load, read and normalize training data
     testing = "/home/jovyan/predict-code/test.csv"
@@ -59,7 +58,7 @@ def inference():
     
     f =os.path.isfile('/home/jovyan/output/output.txt')
     if (f):
-    	f1 = open('/home/jovyan/output/output.txt','w')
+    	f1 = open('/home/jovyan/output/output.txt','a')
     	f1.write(predict+' ')
     	f1.close()
     

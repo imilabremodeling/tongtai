@@ -1,11 +1,8 @@
 FROM jupyter/scipy-notebook:2022-06-02
 
-VOLUME ["/home/jovyan/output"]
-
-RUN mkdir my-model predict-code script
+RUN mkdir my-model predict-code output script
 ENV MODEL_DIR=/home/jovyan/my-model
 ENV LOCAL_PATH=/home/jovyan/data
-ENV OUTPUT_PATH=/home/jovyan/output
 ENV MODEL_FILE_LDA=clf_lda.joblib
 ENV MODEL_FILE_NN=clf_nn.joblib
 
