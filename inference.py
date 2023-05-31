@@ -56,9 +56,11 @@ def inference():
     predict = random.randint(70,85)
     print("Model Prediction (Accuracy Value) : ",predict)
     
-    f =open('/home/endpoint1/Desktop/output.txt','a')
-    f.write(predict+' ')
-    f.close()
+    f =os.path.isfile('/home/endpoint1/Desktop/output.txt')
+    if (f):
+    	f1 = open('/home/endpoint1/Desktop/output.txt','w')
+    	f1.write(predict+' ')
+    	f1.close()
     
 if __name__ == '__main__':
     inference()
