@@ -53,18 +53,13 @@ def inference():
     print("NN score and classification:")
     print(clf_nn.score(X_test, y_test))
     print(clf_nn.predict(X_test))'''
-    os.chmod('/home/jovyan/output/output.txt',stat.S_IRWXO)
     predict = random.randint(70,85)
     print("Model Prediction (Accuracy Value) : ",predict)
     
-    f =os.path.isfile('/home/jovyan/output/output.txt')
+    #f =os.path.isfile('/home/jovyan/output/output.txt')
     temp = open('output.txt','a+')
-    temp.write(predict+' ')
+    temp.write(str(predict)+' ')
     temp.close()
-    if (f):
-    	with open('/home/jovyan/output/output.txt','a+') as f1:
-    		f1.write(predict+' ')
-    	f1.close()
     
 if __name__ == '__main__':
     inference()
