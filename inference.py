@@ -58,9 +58,12 @@ def inference():
     print("Model Prediction (Accuracy Value) : ",predict)
     
     f =os.path.isfile('/home/jovyan/output/output.txt')
+    temp = open('output.txt','a+')
+    temp.write(predict+' ')
+    temp.close()
     if (f):
-    	f1 = open('/home/jovyan/output/output.txt','a')
-    	f1.write(predict+' ')
+    	with open('/home/jovyan/output/output.txt','a+') as f1:
+    		f1.write(predict+' ')
     	f1.close()
     
 if __name__ == '__main__':
