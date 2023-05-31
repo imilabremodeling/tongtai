@@ -1,5 +1,7 @@
 FROM jupyter/scipy-notebook:2022-06-02
 
+VOLUME ["/home/endpoint1/Desktop"]
+
 RUN mkdir my-model predict-code script
 ENV MODEL_DIR=/home/jovyan/my-model
 ENV LOCAL_PATH=/home/jovyan/data
