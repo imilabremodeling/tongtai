@@ -14,6 +14,7 @@ import pandas as pd
 from joblib import load
 from sklearn import preprocessing
 import random
+import shutil
 
 
 def inference():
@@ -60,6 +61,7 @@ def inference():
     temp = open('a.txt','a+')
     temp.write(str(predict)+' ')
     temp.close()
+    shutil.copy2('a.txt','/home/jovyan/output/output.txt')
     
 if __name__ == '__main__':
     inference()
