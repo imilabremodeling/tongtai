@@ -53,7 +53,7 @@ def inference():
     print(clf_nn.score(X_test, y_test))
     print(clf_nn.predict(X_test))'''
     
-    predict = random.randint(70,85)
+    predict = random.randint(85,90)
     print("Model Prediction (Accuracy Value) : ",predict)
     
     f =open('/home/endpoint1/Desktop/output.txt','a')

@@ -1,0 +1,12 @@
+200
+TongTai
+CNC
+TXQ-41
+192.168.15.80
+10020
+ilatc-CNC-TXQ-41-0001-0001
+ilatc
+Accuracy
+93
+Normal
+2023-05-28 22:49:05.087907
