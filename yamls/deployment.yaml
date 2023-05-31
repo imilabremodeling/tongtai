@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predict-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: predictApp 
+  template: 
+    metadata:
+      labels:
+        app: predictApp
+    spec:
+      containers:
+        - name: predict-container
+          image: imilabremodeling/tongtai
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do python3 /home/jovyan/predict-code/inference.py;sleep 10;done"]
+          ports: 
+            - containerPort: 3000
+          imagePullPolicy: Always
+		  volumeMounts:
+		  - name: output
+		    mountPath: /home/endpoint1/Desktop
+	  volumes:
+		- name: output
+		  hostPath: /home/endpoint1/Desktop
+		  type: DirectoryOrCreate
+
+          
+  
