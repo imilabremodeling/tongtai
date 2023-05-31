@@ -22,6 +22,7 @@ def inference():
     MODEL_FILE_NN = os.environ["MODEL_FILE_NN"]
     #MODEL_PATH_LDA = os.path.join(MODEL_DIR, MODEL_FILE_LDA)
     MODEL_PATH_NN = os.path.join(MODEL_DIR, MODEL_FILE_NN)
+    OUTPUT_PATH = os.environ["OUTPUT_PATH"]
     print("code testttttttttiiiiiiing")    
     # Load, read and normalize training data
     testing = "/home/jovyan/predict-code/test.csv"
@@ -56,9 +57,9 @@ def inference():
     predict = random.randint(70,85)
     print("Model Prediction (Accuracy Value) : ",predict)
     
-    f =os.path.isfile('/home/endpoint1/Desktop/output.txt')
+    f =os.path.isfile('/home/jovyan/output/output.txt')
     if (f):
-    	f1 = open('/home/endpoint1/Desktop/output.txt','w')
+    	f1 = open('/home/jovyan/output/output.txt','w')
     	f1.write(predict+' ')
     	f1.close()
     

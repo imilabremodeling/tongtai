@@ -1,10 +1,11 @@
 FROM jupyter/scipy-notebook:2022-06-02
 
-VOLUME ["/home/endpoint1/Desktop"]
+VOLUME ["/home/jovyan/output"]
 
 RUN mkdir my-model predict-code script
 ENV MODEL_DIR=/home/jovyan/my-model
 ENV LOCAL_PATH=/home/jovyan/data
+ENV OUTPUT_PATH=/home/jovyan/output
 ENV MODEL_FILE_LDA=clf_lda.joblib
 ENV MODEL_FILE_NN=clf_nn.joblib
 
@@ -13,6 +14,7 @@ RUN pip install --no-cache-dir joblib==1.1.0
 COPY test.csv /home/jovyan/predict-code/test.csv
 COPY clf_nn.joblib /home/jovyan/my-model/clf_nn.joblib
 COPY inference.py /home/jovyan/predict-code/inference.py
+COPY output.txt /home/jovyan/output/output.txt
 
 HEALTHCHECK CMD curl -fs http://localhost/ || exit 1
 
