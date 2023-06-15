@@ -1,100 +1,87 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-# import warnings
-import warnings
-# filter warnings
-warnings.filterwarnings('ignore')
-
-# Input data files are available in the "../input/" directory.
-# For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
-from keras.utils.np_utils import to_categorical # convert to one-hot-encoding
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-import itertools
-
-from keras.utils.np_utils import to_categorical # convert to one-hot-encoding
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
-from keras.optimizers import RMSprop,Adam
-from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import ReduceLROnPlateau
+import seaborn as sns
 
 import os
-def inference():
-	print(os.listdir("."))
+for dirname, _, filenames in os.walk('.'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+from sklearn import linear_model
+from sklearn.dummy import DummyClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import Perceptron
+from sklearn.linear_model import SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC, LinearSVC
+from sklearn.naive_bayes import GaussianNB
 
-	train = pd.read_csv("train.csv")
-	print(train.shape)
-	train.head()
-	test= pd.read_csv("test.csv")
-	print(test.shape)
-	test.head()
-	Y_train = train["label"]
-	# Drop 'label' column
-	X_train = train.drop(labels = ["label"],axis = 1)
+main_df=pd.read_csv('train.csv')
+main_df=main_df.fillna('no')
+main_df.head()
+files = list()
 
-	plt.figure(figsize=(15,7))
-	g = sns.countplot(Y_train, palette="icefire")
-	plt.title("Number of digit classes")
-	Y_train.value_counts()
+for i in range(1,19):
+    exp_number = '0' + str(i) if i < 10 else str(i)
+    file = pd.read_csv("experiment_{}.csv".format(exp_number))
+    row = main_df[main_df['No'] == i]
+    
+     #add experiment settings to features
+    file['feedrate']=row.iloc[0]['feedrate']
+    file['clamp_pressure']=row.iloc[0]['clamp_pressure']
+    
+    # Having label as 'tool_conidtion'
+    
+    file['label'] = 1 if row.iloc[0]['tool_condition'] == 'worn' else 0
+    files.append(file)
+df = pd.concat(files, ignore_index = True)
+df.head()
+pro={'Layer 1 Up':1,'Repositioning':2,'Layer 2 Up':3,'Layer 2 Up':4,'Layer 1 Down':5,'End':6,'Layer 2 Down':7,'Layer 3 Down':8,'Prep':9,'end':10,'Starting':11}
 
-	X_train = X_train / 255.0
-	test = test / 255.0
-	print("x_train shape: ",X_train.shape)
-	print("test shape: ",test.shape)
+data=[df]
 
-	X_train = X_train.values.reshape(-1,28,28,1)
-	test = test.values.reshape(-1,28,28,1)
-	print("x_train shape: ",X_train.shape)
-	print("test shape: ",test.shape)
+for dataset in data:
+    dataset['Machining_Process']=dataset['Machining_Process'].map(pro)
+    df=df.drop(['Z1_CurrentFeedback','Z1_DCBusVoltage','Z1_OutputCurrent','Z1_OutputVoltage','S1_SystemInertia'],axis=1)
+    
+X=df.drop(['label','Machining_Process'],axis=1)
+Y=df['label']
+print('The dimension of X table is: ',X.shape,'\n')
+print('The dimension of Y table is: ', Y.shape)
+from sklearn.model_selection import train_test_split
+
+#divided into testing and training
+x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.25, random_state=42)
+sgd_model=SGDClassifier()
+sgd_model.fit(x_train,y_train)
+sgd_model_pred=sgd_model.predict(x_test)
+acc_sgd_model=round(sgd_model.score(x_train, y_train)*100,2)
+rmf_model=RandomForestClassifier()
+rmf_model.fit(x_train,y_train)
+rmf_model_pred=rmf_model.predict(x_test)
+acc_rmf_model=round(rmf_model.score(x_train, y_train)*100,2)
+from sklearn.model_selection import cross_val_score
+rmf_model = RandomForestClassifier(n_estimators=100)
+scores = cross_val_score(rmf_model, x_train, y_train, cv=10, scoring = "accuracy")
+print("Scores:", scores,'\n')
+print("Mean:", scores.mean(),'\n')
+print("Standard Deviation:", scores.std())
+rmf_model = RandomForestClassifier(n_estimators=100, oob_score = True)
+rmf_model.fit(x_train, y_train)
+y_prediction = rmf_model.predict(x_test)
+
+rmf_model.score(x_train, y_train)
+
+acc_rmf_model = round(rmf_model.score(x_train, y_train) * 100, 2)
+print(round(acc_rmf_model,2,), "%")
+print("oob score:", round(rmf_model.oob_score_, 4)*100, "%")
 
 
-	Y_train = to_categorical(Y_train, num_classes = 10)
 
 
-	X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size = 0.1, random_state=2)
-	print("x_train shape",X_train.shape)
-	print("x_test shape",X_val.shape)
-	print("y_train shape",Y_train.shape)
-	print("y_test shape",Y_val.shape)
-
-
-
-	model = Sequential()
-	#
-	model.add(Conv2D(filters = 8, kernel_size = (5,5),padding = 'Same', 
-		         activation ='relu', input_shape = (28,28,1)))
-	model.add(MaxPool2D(pool_size=(2,2)))
-	model.add(Dropout(0.25))
-	#
-	model.add(Conv2D(filters = 16, kernel_size = (3,3),padding = 'Same', 
-		         activation ='relu'))
-	model.add(MaxPool2D(pool_size=(2,2), strides=(2,2)))
-	model.add(Dropout(0.25))
-	# fully connected
-	model.add(Flatten())
-	model.add(Dense(256, activation = "relu"))
-	model.add(Dropout(0.5))
-	model.add(Dense(10, activation = "softmax"))
-	optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
-	model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics=["accuracy"])
-	epochs = 10  # for better result increase the epochs
-	batch_size = 250
-	datagen = ImageDataGenerator(
-		featurewise_center=False,  # set input mean to 0 over the dataset
-		samplewise_center=False,  # set each sample mean to 0
-		featurewise_std_normalization=False,  # divide inputs by std of the dataset
-		samplewise_std_normalization=False,  # divide each input by its std
-		zca_whitening=False,  # dimesion reduction
-		rotation_range=5,  # randomly rotate images in the range 5 degrees
-		zoom_range = 0.1, # Randomly zoom image 10%
-		width_shift_range=0.1,  # randomly shift images horizontally 10%
-		height_shift_range=0.1,  # randomly shift images vertically 10%
-		horizontal_flip=False,  # randomly flip images
-		vertical_flip=False)  # randomly flip images
-
-	datagen.fit(X_train)
-	history = model.fit_generator(datagen.flow(X_train,Y_train, batch_size=batch_size),
-		                      epochs = epochs, validation_data = (X_val,Y_val), steps_per_epoch=X_train.shape[0] // batch_size)
