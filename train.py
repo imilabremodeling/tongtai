@@ -22,7 +22,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.naive_bayes import GaussianNB
 
-def inference();
+def inference():
 	main_df=pd.read_csv('train.csv')
 	main_df=main_df.fillna('no')
 	main_df.head()
